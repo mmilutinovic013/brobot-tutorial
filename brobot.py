@@ -14,14 +14,72 @@ from textblob import TextBlob
 GREETING_KEYWORDS = ("hello", "hi", "greetings", "yo", "what's up", "sup", "suh dude")
 
 # Responses from the bot
-GREETINGS_RESPONSES = ["sup bruh", "suh dude", "swag", "yo", "yanny or laurel, bruh"]
+GREETING_RESPONSES = ["sup bruh", "suh dude", "swag", "yo", "yanny or laurel, bruh"]
 
 # Create function to check for the user's input sentence
 def check_for_greeting(sentence):
     # if any of the words in the user input is in the user input list - give a response.
     for word in sentence.words:
         if word.lower() in GREETING_KEYWORDS:
-            return random.choice(GREETINGS_RESPONSES)
+            return random.choice(GREETING_RESPONSES)
+
+
+def respond(sentence):
+    # Parse the user sentence to find candidate "best response" sentences
+    cleaned = preprocess_text(sentence)
+    parsed TextBlob(cleaned)
+
+    # Loop through all sentences. This will help with noun extraction
+    pronoun, noun, adjective, verb = find_candidate_parts_of_speech(parsed)
+
+    # If we said something about the bot and used a direct noun...construct sentence around that noun.
+    resp = check_for_comment_about_bot(pronoun, noun, adjective)
+
+    # If the user greeted the bot - we will use a greeting response.
+    if not resp:
+        check_for_greeting(parsed)
+    
+    # If we don't override the final sentence - we try to construct a new one.
+    if not pronoun:
+        resp = random.choice(NONE_RESPONSES)
+        elif pronoun == 'I' and not verb:
+            resp = random.choice(COMMENTS_ABOUT_SELF)
+        else:
+            resp = construct_response(pronoun, noun, verb)
+
+    # If none of that works - use a random response:
+    if not resp:
+        resp = random.choice(NONE_RESPONSES)
+    
+    # Log the response so we have history (can potentially use for later training)
+    logger.info("Returning phrase '%s'", resp)
+
+    # Filter response so we aren't saying bad stuff...
+    filter_response(resp)
+
+    # Return our response
+    return resp
+
+# Given the parsed input - find the best pronoun, direct noun, and verb
+# to match the user's input. Returns a tuple of pronoun, noun, adj, verb, or None (if no good match)
+def find_candidate_parts_of_speech:
+    pronoun = None
+    noun = None
+    adjective = None
+    verb = None
+    
+    # Go through and find all pronouns, nouns, adjectives, and verbs in sentence.
+    for sent in parsed.sentences:
+        pronoun = find_pronoun(sent)
+        noun = find_noun(sent)
+        adjective = find_adjective(sent)
+        verb = find_verb(sent)
+    
+    # Log the pronouns, nouns, adjectives, and verbs for later use.
+    logger.info("Pronoun=%s, noun=%s, adjective=%s, verb=%s", pronoun, noun, adjective, verb)
+
+    # return tuple
+    return pronoun, noun, adjective, verb
 
 # If none of the special 1:1 cases match - we try to construct our own response
 def construct_response(pronoun, noun, verb):
