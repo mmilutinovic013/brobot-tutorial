@@ -27,7 +27,7 @@ def check_for_greeting(sentence):
 def respond(sentence):
     # Parse the user sentence to find candidate "best response" sentences
     cleaned = preprocess_text(sentence)
-    parsed TextBlob(cleaned)
+    parsed = TextBlob(cleaned)
 
     # Loop through all sentences. This will help with noun extraction
     pronoun, noun, adjective, verb = find_candidate_parts_of_speech(parsed)
