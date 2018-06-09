@@ -42,10 +42,10 @@ def respond(sentence):
     # If we don't override the final sentence - we try to construct a new one.
     if not pronoun:
         resp = random.choice(NONE_RESPONSES)
-        elif pronoun == 'I' and not verb:
-            resp = random.choice(COMMENTS_ABOUT_SELF)
-        else:
-            resp = construct_response(pronoun, noun, verb)
+    elif pronoun == 'I' and not verb:
+        resp = random.choice(COMMENTS_ABOUT_SELF)
+    else:
+        resp = construct_response(pronoun, noun, verb)
 
     # If none of that works - use a random response:
     if not resp:
@@ -62,7 +62,7 @@ def respond(sentence):
 
 # Given the parsed input - find the best pronoun, direct noun, and verb
 # to match the user's input. Returns a tuple of pronoun, noun, adj, verb, or None (if no good match)
-def find_candidate_parts_of_speech:
+def find_candidate_parts_of_speech(parsed):
     pronoun = None
     noun = None
     adjective = None
@@ -92,7 +92,7 @@ def construct_response(pronoun, noun, verb):
     # Some comment about verbs
     if verb:
         verb_word = verb[0]
-        if verb_word in ('be', 'am', 'is') # Some comment about lemmas!
+        if verb_word in ('be', 'am', 'is'): # Some comment about lemmas!
             if pronoun.lower() == 'you':
                 # Bot responds that the bot isn't what they say the user says they are.
                 resp.append("aren't really")
